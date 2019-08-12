@@ -259,6 +259,7 @@ data class AddedNodeInfo(
 data class NodeAddress(
         val address: String? = null,
         val connected: String? = null)
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class BlockInfo(
         val hash: String? = null,
