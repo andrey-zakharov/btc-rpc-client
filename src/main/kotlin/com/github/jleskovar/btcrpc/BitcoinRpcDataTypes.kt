@@ -1,5 +1,6 @@
 package com.github.jleskovar.btcrpc
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.math.BigDecimal
 
 /**
@@ -259,6 +260,7 @@ data class NodeAddress(
         val address: String? = null,
         val connected: String? = null)
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class BlockInfo(
         val hash: String? = null,
         val confirmations: Long? = null,
@@ -279,6 +281,7 @@ data class BlockInfo(
         val previousblockhash: String? = null,
         val nextblockhash: String? = null)
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class BlockInfoWithTransactions(
         val hash: String? = null,
         val confirmations: Long? = null,
