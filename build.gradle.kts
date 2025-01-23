@@ -5,8 +5,9 @@
  */
 
 plugins {
-    `java-library`
+    //`java-library`
     `maven-publish`
+    alias(libs.plugins.kotlin.jvm)
 }
 
 repositories {
@@ -20,16 +21,16 @@ dependencies {
     api(libs.com.github.briandilley.jsonrpc4j.jsonrpc4j)
     api(libs.com.fasterxml.jackson.core.jackson.databind)
     api(libs.com.neovisionaries.nv.websocket.client)
-    api(libs.org.jetbrains.kotlin.kotlin.stdlib)
-    api(libs.org.jetbrains.kotlin.kotlin.reflect)
+    api(libs.kotlin.stdlib)
+    api(libs.kotlin.reflect)
     api(libs.org.bitcoinj.bitcoinj.core)
     api(libs.io.reactivex.rxjava2.rxjava)
 }
 
 group = "com.github.jleskovar"
-version = "1.2.3"
+version = "1.2.4"
 description = "btc-rpc-client"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+//java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 publishing {
     publications.create<MavenPublication>("maven") {

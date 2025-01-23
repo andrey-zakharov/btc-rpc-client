@@ -2,6 +2,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
+kotlin = "1.9.24"
 com-fasterxml-jackson-core-jackson-databind = "2.8.5"
 com-github-briandilley-jsonrpc4j-jsonrpc4j = "1.5.2"
 com-neovisionaries-nv-websocket-client = "2.3"
@@ -16,5 +17,8 @@ com-github-briandilley-jsonrpc4j-jsonrpc4j = { module = "com.github.briandilley.
 com-neovisionaries-nv-websocket-client = { module = "com.neovisionaries:nv-websocket-client", version.ref = "com-neovisionaries-nv-websocket-client" }
 io-reactivex-rxjava2-rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "io-reactivex-rxjava2-rxjava" }
 org-bitcoinj-bitcoinj-core = { module = "org.bitcoinj:bitcoinj-core", version.ref = "org-bitcoinj-bitcoinj-core" }
-org-jetbrains-kotlin-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "org-jetbrains-kotlin-kotlin-reflect" }
-org-jetbrains-kotlin-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "org-jetbrains-kotlin-kotlin-stdlib" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
