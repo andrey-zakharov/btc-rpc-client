@@ -45,14 +45,8 @@ class WrappedAsyncWebSocketBtcClient(
         return delegate.addMultiSigAddress(required, keys)
     }
 
-    override fun addNode(address: String, operation: NodeListOperation): CompletableFuture<Void> {
-        return delegate.addNode(address, operation)
-    }
-
-    override fun backupWallet(destination: String): CompletableFuture<Void> {
-        return delegate.backupWallet(destination)
-    }
-
+    override fun addNode(address: String, operation: NodeListOperation) = delegate.addNode(address, operation)
+    override fun backupWallet(destination: String): CompletableFuture<Void> = delegate.backupWallet(destination)
     override fun clearBanned(): CompletableFuture<Void> {
         return delegate.clearBanned()
     }
@@ -117,9 +111,7 @@ class WrappedAsyncWebSocketBtcClient(
         return delegate.getBlockWithTransactions(blockHash, verbosity)
     }
 
-    override fun getBlockchainInfo(): CompletableFuture<BlockChainInfo> {
-        return delegate.getBlockchainInfo()
-    }
+    override fun getBlockchainInfo(): CompletableFuture<BlockChainInfo> = delegate.getBlockchainInfo()
 
     override fun getBlockCount(): CompletableFuture<Int> {
         return delegate.getBlockCount()

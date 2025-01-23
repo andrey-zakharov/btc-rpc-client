@@ -1,5 +1,7 @@
 package com.github.jleskovar.btcrpc
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.github.jleskovar.btcrpc.websocket.*
 import com.googlecode.jsonrpc4j.IJsonRpcClient
 import com.googlecode.jsonrpc4j.JsonRpcHttpClient
@@ -29,6 +31,7 @@ object BitcoinRpcClientFactory {
         val jsonRpcHttpClient: IJsonRpcClient
 
         jsonRpcHttpClient = JsonRpcHttpClient(
+                objectMapper,
                 URL("${if (secure) "https" else "http"}://$user@$host:$port"),
                 mapOf(Pair("Authorization", computeBasicAuth(user, password))))
 
@@ -105,5 +108,7 @@ object BitcoinRpcClientFactory {
             "Basic ${BASE64.encodeToString("$user:$password".toByteArray())}"
 
     private val BASE64 = Base64.getEncoder()
+
+    val objectMapper: ObjectMapper by lazy { ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE) }
 }
 

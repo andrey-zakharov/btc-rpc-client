@@ -1,6 +1,7 @@
 package com.github.jleskovar.btcrpc.websocket
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.googlecode.jsonrpc4j.IJsonRpcClient
 import com.googlecode.jsonrpc4j.JsonRpcClient
 import com.neovisionaries.ws.client.WebSocket
@@ -13,7 +14,8 @@ import javax.net.ssl.SSLContext
  * Created by james on 21/12/17.
  */
 
-abstract class AbstractJsonWebSocketRpcClient(wsUrl: String, sslContext: SSLContext) : JsonRpcClient(), IJsonRpcClient {
+abstract class AbstractJsonWebSocketRpcClient(wsUrl: String, sslContext: SSLContext)
+    : JsonRpcClient(ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)), IJsonRpcClient {
 
     private val webSocketFactory = WebSocketFactory()
 

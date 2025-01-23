@@ -110,7 +110,7 @@ interface BitcoinRpcClient {
     fun getDifficulty(): BigDecimal
 
     @JsonRpcMethod("getmemoryinfo")
-    fun getMemoryInfo(): Any
+    fun getMemoryInfo(mode: String? = null): Any
 
     @JsonRpcMethod("getmempoolancestors")
     fun getMempoolAncestors(transactionId: String): Any
@@ -308,6 +308,9 @@ interface BitcoinRpcClient {
     @JsonRpcMethod("submitblock")
     fun submitBlock(blockData: String)
 
+    /**
+     * The number of seconds that the server has been running
+     */
     fun uptime(): Int
 
     @JsonRpcMethod("validateaddress")
@@ -352,4 +355,7 @@ interface BitcoinRpcClient {
 
     @JsonRpcMethod("getblock")
     fun btcdGetBlockWithTransactions(blockHash: String, verbose: Boolean = true): String
+
+    @JsonRpcMethod("help")
+    fun help(command: String = ""): String
 }

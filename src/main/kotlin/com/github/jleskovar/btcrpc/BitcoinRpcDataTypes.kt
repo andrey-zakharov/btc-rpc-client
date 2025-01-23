@@ -5,6 +5,7 @@ import java.math.BigDecimal
 
 /**
  * Created by james on 4/12/17.
+ * TBD generate from bitcoin.h
  */
 
 enum class BlockTemplateRequestMode { template, proposal }
@@ -17,19 +18,49 @@ data class OutPoint(
         val txid: String,
         val vout: Int)
 
+typealias NumTime = Long
+
+// https://github.com/bitcoin/bitcoin/blob/HEAD/src/rpc/blockchain.cpp#L1290
 data class BlockChainInfo(
         val chain: String? = null,
         val blocks: Long? = null,
         val headers: Long? = null,
         val bestblockhash: String? = null,
+        val bits: String? = null, ///< nBits: compact representation of the block difficulty target
+        val target: String? = null, ///< The difficulty target
         val difficulty: BigDecimal? = null,
-        val mediantime: Long? = null,
+        val time: NumTime? = null, ///< The block time expressed in  UNIX_EPOCH_TIME
+        val mediantime: NumTime? = null,
         val verificationprogress: Long? = null,
+        val initialblockdownload: Boolean? = null, ///< (debug information) estimate of whether this node is in Initial Block Download mode
         val chainwork: String? = null,
+        val sizeOnDisk: Long? = null, ///< the estimated size of the block and undo files on disk
         val pruned: Boolean? = null,
         val pruneheight: Long? = null,
+        val automaticPruning: Boolean? = null, ///< whether automatic pruning is enabled (only present if pruning is enabled)
+        val pruneTargetSize: Long? = null, ///< the target size used by pruning (only present if automatic pruning is enabled)
+        val signetChallenge: String? = null, ///< the block challenge (aka. block script), in hexadecimal (only present if the current network is a signet)
         val softforks: List<SoftForkStatus>? = null,
-        val bip9_softforks: Map<String, Bip9SoftForkStatus>? = null)
+        val bip9_softforks: Map<String, Bip9SoftForkStatus>? = null,
+        val warnings: Any? = null, ///< any network and blockchain warnings (DEPRECATED) String | Array<String>
+
+)
+
+data class LockedMemoryInfo(
+        val used: Int, ///< Number of bytes used
+        val free: Int, ///< Number of bytes available in current arenas
+        val total: Int, ///< Total number of bytes managed
+        val locked: Int, ///< Amount of bytes that succeeded locking. If this number is smaller than total, locking pages failed at some point and key data could be swapped to disk."},
+        val chunksUsed: Int, ///< Number allocated chunks
+        val chunksFree: Int, ///< Number unused chunks
+) {
+        companion object {
+                fun fromMap(m: Map<String, Int>) = LockedMemoryInfo(
+                        m["used"]!!, m["free"]!!, m["total"]!!, m["locked"]!!,
+                        m["chunks_used"]!!, m["chunks_free"]!!
+                )
+        }
+}
 
 data class SoftForkRejection(
         val status: Boolean? = null)

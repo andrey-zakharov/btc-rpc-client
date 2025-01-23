@@ -3,13 +3,11 @@
 
 [versions]
 kotlin = "1.9.24"
-com-fasterxml-jackson-core-jackson-databind = "2.8.5"
+com-fasterxml-jackson-core-jackson-databind = "2.13.4.2"
 com-github-briandilley-jsonrpc4j-jsonrpc4j = "1.5.2"
 com-neovisionaries-nv-websocket-client = "2.3"
 io-reactivex-rxjava2-rxjava = "2.1.7"
 org-bitcoinj-bitcoinj-core = "0.14.5"
-org-jetbrains-kotlin-kotlin-reflect = "1.2.10"
-org-jetbrains-kotlin-kotlin-stdlib = "1.2.10"
 
 [libraries]
 com-fasterxml-jackson-core-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "com-fasterxml-jackson-core-jackson-databind" }

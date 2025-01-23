@@ -151,10 +151,7 @@ class WrappedWebSocketBtcClient(
     override fun getDifficulty(): BigDecimal {
         return delegate.getDifficulty()
     }
-
-    override fun getMemoryInfo(): Any {
-        return delegate.getMemoryInfo()
-    }
+    override fun getMemoryInfo(mode: String?) = delegate.getMemoryInfo(mode)
 
     override fun getMempoolAncestors(transactionId: String): Any {
         return delegate.getMempoolAncestors(transactionId)
@@ -367,5 +364,7 @@ class WrappedWebSocketBtcClient(
     override fun searchRawVerboseTransactions(address: String, verbose: Int?, skip: Int?, count: Int?, vInExtra: Int?, reverse: Boolean?): List<SearchedTransactionResult> {
         return delegate.searchRawVerboseTransactions(address, verbose, skip, count, vInExtra, reverse)
     }
+
+    override fun help(command: String) = delegate.help(command)
 
 }
