@@ -302,7 +302,7 @@ data class BlockInfo(
         val version: Long? = null,
         val versionHex: String? = null,
         val merkleroot: String? = null,
-        val tx: List<String>? = null,
+        val tx: List<Any>? = null, // verbosity = 2 returns object
         val time: Long? = null,
         val mediantime: Long? = null,
         val nonce: Long? = null,
@@ -352,4 +352,9 @@ data class EstimateSmartFee(
         val feerate: BigDecimal? = null,
         val errors: List<String>? = null,
         val blocks: Long? = null
+)
+
+data class CreateWalletResult(
+        val name: String? = null,
+        val warning: String? = null
 )

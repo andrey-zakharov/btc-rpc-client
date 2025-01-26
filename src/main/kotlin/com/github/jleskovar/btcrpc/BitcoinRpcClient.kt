@@ -187,6 +187,51 @@ interface BitcoinRpcClient {
             rescan: Boolean? = null
     )
 
+    @JsonRpcMethod("createwallet")
+    fun createWallet(
+        /**
+         * The name for the new wallet. If this is a path, the wallet will be created at the path location.
+         */
+        walletName: String,
+
+        /**
+         * Disable the possibility of private keys (only watchonlys are possible in this mode).
+         */
+        disablePrivateKeys: Boolean = false,
+
+        /**
+         * Create a blank wallet. A blank wallet has no keys or HD seed. One can be set using sethdseed.
+         */
+        blank: Boolean = false,
+
+        /**
+         * Encrypt the wallet with this passphrase.
+         */
+        passphrase: String,
+
+        /**
+         * Keep track of coin reuse, and treat dirty and clean coins differently with privacy considerations in mind.
+         */
+        avoidReuse: Boolean = false,
+
+        /**
+         * Create a native descriptor wallet. The wallet will use descriptors internally to handle address creation
+         */
+        descriptors: Boolean = false,
+
+        /**
+         * Save wallet name to persistent settings and load on startup.
+         * True to add wallet to startup list, false to remove, null to leave unchanged.
+         */
+        loadOnStartup: Boolean = false,
+
+        /**
+         * Use an external signer such as a hardware wallet. Requires -signer to be configured.
+         * Wallet creation will fail if keys cannot be fetched. Requires disable_private_keys and descriptors set to true.
+         */
+        externalSigner: Boolean = false,
+    ): CreateWalletResult
+
     @JsonRpcMethod("importwallet")
     fun importWallet(walletFile: String)
 

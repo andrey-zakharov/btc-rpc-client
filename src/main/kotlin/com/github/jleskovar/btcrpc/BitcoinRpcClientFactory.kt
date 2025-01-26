@@ -24,7 +24,8 @@ object BitcoinRpcClientFactory {
                      host: String,
                      port: Int,
                      secure: Boolean = false,
-                     sslContext: SSLContext = createUnsafeSslContext()):
+                     sslContext: SSLContext = createUnsafeSslContext(),
+                     wallet: String? = null):
 
             BitcoinRpcClient {
 
@@ -32,7 +33,9 @@ object BitcoinRpcClientFactory {
 
         jsonRpcHttpClient = JsonRpcHttpClient(
                 objectMapper,
-                URL("${if (secure) "https" else "http"}://$user@$host:$port"),
+                URL("${if (secure) "https" else "http"}://$user@$host:$port${
+                    wallet?.let { "/wallet/$it" } ?: ""
+                }"),
                 mapOf(Pair("Authorization", computeBasicAuth(user, password))))
 
         jsonRpcHttpClient.setSslContext(sslContext)

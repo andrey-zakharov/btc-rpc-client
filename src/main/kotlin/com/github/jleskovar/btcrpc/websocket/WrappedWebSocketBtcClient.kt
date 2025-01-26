@@ -237,6 +237,17 @@ class WrappedWebSocketBtcClient(
         delegate.importPublicKey(publicKey, label, rescan)
     }
 
+    override fun createWallet(
+        walletName: String,
+        disablePrivateKeys: Boolean,
+        blank: Boolean,
+        passphrase: String,
+        avoidReuse: Boolean,
+        descriptors: Boolean,
+        loadOnStartup: Boolean,
+        externalSigner: Boolean,
+    ) = delegate.createWallet( walletName, disablePrivateKeys, blank, passphrase, avoidReuse, descriptors, loadOnStartup, externalSigner )
+
     override fun importWallet(walletFile: String) {
         delegate.importWallet(walletFile)
     }
