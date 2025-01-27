@@ -1,7 +1,9 @@
 package com.github.jleskovar.btcrpc
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.github.jleskovar.btcrpc.websocket.*
 import com.googlecode.jsonrpc4j.IJsonRpcClient
 import com.googlecode.jsonrpc4j.JsonRpcHttpClient
@@ -112,6 +114,9 @@ object BitcoinRpcClientFactory {
 
     private val BASE64 = Base64.getEncoder()
 
-    val objectMapper: ObjectMapper by lazy { ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE) }
+    val objectMapper: ObjectMapper by lazy {
+        ObjectMapper().registerKotlinModule()
+    //.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+    }
 }
 

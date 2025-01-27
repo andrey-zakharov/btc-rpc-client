@@ -19,12 +19,14 @@ repositories {
 
 dependencies {
     api(libs.com.github.briandilley.jsonrpc4j.jsonrpc4j)
+    api(libs.com.fasterxml.jackson.module.jackson.module.kotlin)
     api(libs.com.fasterxml.jackson.core.jackson.databind)
     api(libs.com.neovisionaries.nv.websocket.client)
     api(libs.kotlin.stdlib)
     api(libs.kotlin.reflect)
     api(libs.org.bitcoinj.bitcoinj.core)
     api(libs.io.reactivex.rxjava2.rxjava)
+
 }
 
 group = "com.github.jleskovar"

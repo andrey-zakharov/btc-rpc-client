@@ -4,6 +4,7 @@
 [versions]
 kotlin = "1.9.24"
 com-fasterxml-jackson-core-jackson-databind = "2.13.4.2"
+com-fasterxml-jackson-module-jackson-module-kotlin = "2.18.2"
 com-github-briandilley-jsonrpc4j-jsonrpc4j = "1.5.2"
 com-neovisionaries-nv-websocket-client = "2.3"
 io-reactivex-rxjava2-rxjava = "2.1.7"
@@ -11,6 +12,7 @@ org-bitcoinj-bitcoinj-core = "0.14.5"
 
 [libraries]
 com-fasterxml-jackson-core-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "com-fasterxml-jackson-core-jackson-databind" }
+com-fasterxml-jackson-module-jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "com-fasterxml-jackson-module-jackson-module-kotlin" }
 com-github-briandilley-jsonrpc4j-jsonrpc4j = { module = "com.github.briandilley.jsonrpc4j:jsonrpc4j", version.ref = "com-github-briandilley-jsonrpc4j-jsonrpc4j" }
 com-neovisionaries-nv-websocket-client = { module = "com.neovisionaries:nv-websocket-client", version.ref = "com-neovisionaries-nv-websocket-client" }
 io-reactivex-rxjava2-rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "io-reactivex-rxjava2-rxjava" }

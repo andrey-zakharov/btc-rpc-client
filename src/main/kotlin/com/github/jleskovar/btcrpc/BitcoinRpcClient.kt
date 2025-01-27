@@ -61,6 +61,18 @@ interface BitcoinRpcClient {
     @JsonRpcMethod("getaddednodeinfo")
     fun getAddedNodeInfo(): List<AddedNodeInfo>
 
+    /**
+     * Return information about the given bitcoin address.
+     * Some of the information will only be present if the address is in the active wallet.
+     */
+    @JsonRpcMethod("getaddressinfo")
+    fun getAddressInfo(
+        /**
+         * The bitcoin address for which to get information.
+         */
+        address: String
+    ): BitcoinAddressInfo
+
     @JsonRpcMethod("getbalance")
     fun getBalance(
             account: String = "*",
@@ -73,8 +85,28 @@ interface BitcoinRpcClient {
     @JsonRpcMethod("getblock")
     fun getBlockData(blockHash: String, verbosity: Int = 0): String
 
+    /**
+     * If verbosity is 0, returns a string that is serialized, hex-encoded data for block 'hash'.
+     * If verbosity is 1, returns an Object with information about block <hash>.
+     * If verbosity is 2, returns an Object with information about block <hash>
+     *     and information about each transaction.
+     * If verbosity is 3, returns an Object with information about block <hash>
+     *     and information about each transaction, including prevout information for inputs
+     *     (only for unpruned blocks in the current best chain).
+     */
     @JsonRpcMethod("getblock")
-    fun getBlock(blockHash: String, verbosity: Int = 1): BlockInfo
+    fun getBlock(
+        /**
+         * The block hash
+         */
+        blockHash: String,
+        /**
+         * 0 for hex-encoded data,
+         * 1 for a JSON object,
+         * 2 for JSON object with transaction data,
+         * and 3 for JSON object with transaction data including prevout information for inputs
+         */
+        verbosity: Int = 1): BlockInfo
 
     @JsonRpcMethod("getblock")
     fun getBlockWithTransactions(blockHash: String, verbosity: Int = 2): BlockInfoWithTransactions
@@ -172,6 +204,19 @@ interface BitcoinRpcClient {
             label: String? = null,
             rescan: Boolean? = null,
             includePayToScriptHash: Boolean? = null)
+
+    /**
+     * Import descriptors. This will trigger a rescan of the blockchain based on the earliest timestamp of all descriptors being imported.
+     * Requires a new wallet backup.
+     * When importing descriptors with multipath key expressions, if the multipath specifier contains exactly two elements,
+     * the descriptor produced from the second elements will be imported as an internal descriptor.
+     * Note: This call can take over an hour to complete if using an early timestamp; during that time, other rpc calls
+     * may report that the imported keys, addresses or scripts exist but related transactions are still missing.
+     * The rescan is significantly faster if block filters are available (using startup option "-blockfilterindex=1").
+     * @link https://github.com/bitcoin/bitcoin/blob/master/src/wallet/rpc/backup.cpp#L1615
+     */
+    @JsonRpcMethod("importdescriptors")
+    fun importDescriptors(request: List<ImportDescriptorsRequest>): List<ImportDescriptorsResult>
 
     @JsonRpcMethod("importprivkey")
     fun importPrivateKey(
@@ -403,4 +448,20 @@ interface BitcoinRpcClient {
 
     @JsonRpcMethod("help")
     fun help(command: String = ""): String
+
+    //<editor-fold desc="Wallet">
+
+    /**
+     * Stores the wallet decryption key in memory for 'timeout' seconds.
+     * This is needed prior to performing transactions related to private keys such as sending bitcoins
+     * Note:
+     * Issuing the walletpassphrase command while the wallet is already unlocked will set a new unlock
+     * time that overrides the old one.
+     */
+    @JsonRpcMethod("walletpassphrase")
+    fun walletPassphrase(
+        passphrase: String, ///< The wallet passphrase
+        timeout: Long, ///< The time to keep the decryption key in seconds; capped at 100000000 (~3 years).
+    )
+    //</editor-fold>
 }
