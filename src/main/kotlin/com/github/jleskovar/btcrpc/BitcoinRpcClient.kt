@@ -73,6 +73,12 @@ interface BitcoinRpcClient {
         address: String
     ): BitcoinAddressInfo
 
+    /**
+     * Returns the list of addresses assigned the specified label.
+     */
+    @JsonRpcMethod("getaddressesbylabel")
+    fun getAddressesByLabel(/** The label. */ label: String): Map<String, AddressByLabelResult>
+
     @JsonRpcMethod("getbalance")
     fun getBalance(
             account: String = "*",
@@ -138,6 +144,13 @@ interface BitcoinRpcClient {
     @JsonRpcMethod("getconnectioncount")
     fun getConnectionCount(): Int
 
+    /**
+     * Analyses a descriptor.
+     * @param descriptor The descriptor (https://github.com/bitcoin/bitcoin/blob/master/doc/descriptors.md).
+     */
+    @JsonRpcMethod("getdescriptorinfo")
+    fun getDescriptorInfo(descriptor: String): DescriptorInfo
+
     @JsonRpcMethod("getdifficulty")
     fun getDifficulty(): BigDecimal
 
@@ -168,8 +181,23 @@ interface BitcoinRpcClient {
     @JsonRpcMethod("getnetworkinfo")
     fun getNetworkInfo(): NetworkInfo
 
+    /**
+     * Returns a new Bitcoin address for receiving payments.
+     * If 'label' is specified, it is added to the address book
+     * so payments received with the address will be associated with 'label'.
+     */
     @JsonRpcMethod("getnewaddress")
-    fun getNewAddress(): String
+    fun getNewAddress(
+        /**
+         * The label name for the address to be linked to. It can also be set to the empty string "" to represent the default label.
+         * The label does not need to exist, it will be created if there is no label by the given name.
+         */
+        label: String = "",
+        /**
+         * The address type to use. Options are "legacy", "p2sh-segwit", "bech32", and "bech32m".
+         */
+        address_type: String? = null
+    ): String
 
     @JsonRpcMethod("getpeerinfo")
     fun getPeerInfo(): List<PeerInfo>
@@ -252,7 +280,7 @@ interface BitcoinRpcClient {
         /**
          * Encrypt the wallet with this passphrase.
          */
-        passphrase: String,
+        passphrase: String? = null,
 
         /**
          * Keep track of coin reuse, and treat dirty and clean coins differently with privacy considerations in mind.
@@ -286,8 +314,31 @@ interface BitcoinRpcClient {
     @JsonRpcMethod("listaddressgroupings")
     fun listAddressGroupings(): List<*>
 
+    /**
+     * List descriptors imported into a descriptor-enabled wallet.
+     */
+    @JsonRpcMethod("listdescriptors")
+    fun listDescriptors(
+        /**
+         * Show private descriptors.
+         */
+        private: Boolean = false
+    ): ListDescriptorsResult
+
     @JsonRpcMethod("listbanned")
     fun listBanned(): List<String>
+
+    /**
+     * Returns the list of all labels, or labels that are assigned to addresses with a specific purpose.
+     * @return array of Label name
+     */
+    @JsonRpcMethod("listlabels")
+    fun listLabels(
+        /**
+         * Address purpose to list labels for ('send','receive'). An empty string is the same as not providing this argument.
+         */
+        purpose: String? = null
+    ): List<String>
 
     @JsonRpcMethod("listlockunspent")
     fun listLockUnspent(): List<Map<*, *>>
@@ -457,10 +508,11 @@ interface BitcoinRpcClient {
      * Note:
      * Issuing the walletpassphrase command while the wallet is already unlocked will set a new unlock
      * time that overrides the old one.
+     * @param passphrase - The wallet passphrase
      */
     @JsonRpcMethod("walletpassphrase")
     fun walletPassphrase(
-        passphrase: String, ///< The wallet passphrase
+        passphrase: String,
         timeout: Long, ///< The time to keep the decryption key in seconds; capped at 100000000 (~3 years).
     )
     //</editor-fold>

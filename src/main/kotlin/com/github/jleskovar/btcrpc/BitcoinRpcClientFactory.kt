@@ -27,9 +27,9 @@ object BitcoinRpcClientFactory {
                      port: Int,
                      secure: Boolean = false,
                      sslContext: SSLContext = createUnsafeSslContext(),
-                     wallet: String? = null):
-
-            BitcoinRpcClient {
+                     wallet: String? = null,
+                     readTimeoutMillis: Int? = null,
+    ): BitcoinRpcClient {
 
         val jsonRpcHttpClient: IJsonRpcClient
 
@@ -39,6 +39,7 @@ object BitcoinRpcClientFactory {
                     wallet?.let { "/wallet/$it" } ?: ""
                 }"),
                 mapOf(Pair("Authorization", computeBasicAuth(user, password))))
+        readTimeoutMillis?.let { jsonRpcHttpClient.readTimeoutMillis = it }
 
         jsonRpcHttpClient.setSslContext(sslContext)
 

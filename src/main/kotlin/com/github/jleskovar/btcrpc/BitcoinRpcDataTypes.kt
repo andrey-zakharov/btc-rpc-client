@@ -1,6 +1,7 @@
 package com.github.jleskovar.btcrpc
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.sun.org.apache.xpath.internal.operations.Bool
 import java.math.BigDecimal
@@ -401,7 +402,17 @@ data class CreateWalletResult(
         val warning: String? = null
 )
 
+data class DescriptorInfo(
+        val descriptor: String, ///< The descriptor in canonical form, without private keys. For a multipath descriptor, only the first will be returned.
+        val multipath_expansion: List<String>?=null, ///< All descriptors produced by expanding multipath derivation elements. Only if the provided descriptor specifies multipath derivation elements.
+        val checksum: String, ///< The checksum for the input descriptor
+        val isrange: Boolean, ///< Whether the descriptor is ranged
+        val issolvable: Boolean, ///< Whether the descriptor is solvable
+        val hasprivatekeys: Boolean, ///< Whether the input descriptor contained at least one private key
+)
+
 // RANGE - Special type that is a NUM or [NUM,NUM]
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class ImportDescriptorsRequest(
         val desc: String, ///< Descriptor to import.
         val active: Boolean = false, ///< Set this descriptor to be the active descriptor for the corresponding output type/externality
@@ -419,6 +430,24 @@ data class ImportDescriptorsRequest(
         val label: String = "", ///< Label to assign to the address, only allowed with internal=false. Disabled for ranged descriptors
 )
 
+data class ListDescriptorsResult(
+        val wallet_name: String, ///< Name of wallet this operation was performed on
+        val descriptors: List<WalletDescriptorInfo> ///< Array of descriptor objects (sorted by descriptor string representation)
+)
+
+data class WalletDescriptorInfo(
+        val desc: String, ///< Descriptor string representation
+        val timestamp: Long, ///< The creation time of the descriptor
+        val active: Boolean, ///< Whether this descriptor is currently used to generate new addresses
+        val internal: Boolean? = null, ///< True if this descriptor is used to generate change addresses. False if this descriptor is used to generate receiving addresses; defined only for active descriptors
+        // ranged
+        val range: Pair<Int, Int>? = null, ///< Defined only for ranged descriptors
+                //val : RPCResult::Type::NUM, ///< Range start inclusive
+                //val : RPCResult::Type::NUM, ///< Range end inclusive
+        val next: Int? = null, ///< Same as next_index field. Kept for compatibility reason.
+        val next_index: Int? = null ///<The next index to generate addresses from; defined only for ranged descriptors
+)
+
 /**
  * Response is an array with the same size as the input that has the execution result
  */
@@ -427,4 +456,10 @@ data class ImportDescriptorsResult(
         val warnings: List<String>? = null,
         val error: Any? = null ///< {RPCResult::Type::ELISION, "", "JSONRPC error"},
         //  ELISION,    //!< Special type to denote elision (...)
+)
+
+/** json object with information about address */
+data class AddressByLabelResult(
+        /** Purpose of address ("send" for sending address, "receive" for receiving address) */
+        val purpose: String,
 )

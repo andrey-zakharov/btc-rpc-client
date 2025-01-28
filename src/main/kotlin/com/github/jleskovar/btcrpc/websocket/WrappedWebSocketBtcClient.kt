@@ -96,6 +96,10 @@ class WrappedWebSocketBtcClient(
         return delegate.getAddedNodeInfo()
     }
 
+    override fun getAddressInfo(address: String) = delegate.getAddressInfo(address)
+
+    override fun getAddressesByLabel(label: String) = delegate.getAddressesByLabel(label)
+
     override fun getBalance(account: String, minconf: Int, includeWatchOnly: Boolean): BigDecimal {
         return delegate.getBalance(account, minconf, includeWatchOnly)
     }
@@ -148,6 +152,8 @@ class WrappedWebSocketBtcClient(
         return delegate.getConnectionCount()
     }
 
+    override fun getDescriptorInfo(descriptor: String) = delegate.getDescriptorInfo(descriptor)
+
     override fun getDifficulty(): BigDecimal {
         return delegate.getDifficulty()
     }
@@ -185,8 +191,8 @@ class WrappedWebSocketBtcClient(
         return delegate.getNetworkInfo()
     }
 
-    override fun getNewAddress(): String {
-        return delegate.getNewAddress()
+    override fun getNewAddress(label: String, address_type: String?): String {
+        return delegate.getNewAddress(label, address_type)
     }
 
     override fun getPeerInfo(): List<PeerInfo> {
@@ -229,6 +235,8 @@ class WrappedWebSocketBtcClient(
         delegate.importAddress(scriptOrAddress, label, rescan, includePayToScriptHash)
     }
 
+    override fun importDescriptors(request: List<ImportDescriptorsRequest>) = delegate.importDescriptors(request)
+
     override fun importPrivateKey(privateKey: String, label: String?, rescan: Boolean?) {
         delegate.importPrivateKey(privateKey, label, rescan)
     }
@@ -241,7 +249,7 @@ class WrappedWebSocketBtcClient(
         walletName: String,
         disablePrivateKeys: Boolean,
         blank: Boolean,
-        passphrase: String,
+        passphrase: String?,
         avoidReuse: Boolean,
         descriptors: Boolean,
         loadOnStartup: Boolean,
@@ -252,6 +260,7 @@ class WrappedWebSocketBtcClient(
         delegate.importWallet(walletFile)
     }
 
+    override fun walletPassphrase(passphrase: String, timeout: Long) = delegate.walletPassphrase(passphrase, timeout)
     override fun keypoolRefill(newSize: Int) {
         delegate.keypoolRefill(newSize)
     }
@@ -263,6 +272,10 @@ class WrappedWebSocketBtcClient(
     override fun listBanned(): List<String> {
         return delegate.listBanned()
     }
+
+    override fun listDescriptors(private: Boolean) = delegate.listDescriptors(private)
+
+    override fun listLabels(purpose: String?) = delegate.listLabels(purpose)
 
     override fun listLockUnspent(): List<Map<*, *>> {
         return delegate.listLockUnspent()
