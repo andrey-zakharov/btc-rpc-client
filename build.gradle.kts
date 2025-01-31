@@ -30,13 +30,13 @@ dependencies {
 }
 
 group = "com.github.jleskovar"
-version = "1.2.4"
+version = "1.2.5"
 description = "btc-rpc-client"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+//java.sourceCompatibility = JavaVersion.VERSION_1_8
 kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    }
+//    jvmToolchain {
+//        languageVersion.set(JavaLanguageVersion.of(8))
+//    }
 }
 publishing {
     publications.create<MavenPublication>("maven") {

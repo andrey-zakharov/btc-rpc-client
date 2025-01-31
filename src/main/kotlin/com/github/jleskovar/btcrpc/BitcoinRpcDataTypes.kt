@@ -3,9 +3,7 @@ package com.github.jleskovar.btcrpc
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.sun.org.apache.xpath.internal.operations.Bool
 import java.math.BigDecimal
-import kotlin.time.TimeMark
 
 /**
  * Created by james on 4/12/17.
