@@ -23,6 +23,11 @@ data class OutPoint(
         val vout: Int)
 
 typealias NumTime = Long
+typealias StrAmount = String
+typealias StrHex = String
+
+fun NumTime.dis() = java.time.format.DateTimeFormatter.ISO_INSTANT
+        .format(java.time.Instant.ofEpochSecond(this))
 
 // https://github.com/bitcoin/bitcoin/blob/HEAD/src/rpc/blockchain.cpp#L1290
 data class BlockChainInfo(
@@ -192,15 +197,15 @@ data class BitcoinAddressInfo(
         val sigsrequired: Int? = null, ///< The number of signatures required to spend multisig output (only if script is multisig).
         val pubkey: String? = null, ///< The hex value of the raw public key for single-key addresses (possibly embedded in P2SH or P2WSH).
         val embedded: Any? = null, ///< Information about the address embedded in P2SH or P2WSH, if relevant and known.
-        //                             {RPCResult::Type::ELISION, "", "Includes all getaddressinfo output fields for the embedded address, excluding metadata (timestamp, hdkeypath, hdseedid)\n"
-        //                            "and relation to the wallet (ismine, iswatchonly)."},
+        /** Includes all getaddressinfo output fields for the embedded address, excluding metadata (timestamp, hdkeypath, hdseedid)
+         * and relation to the wallet (ismine, iswatchonly). */
         val iscompressed: Boolean? = null, ///< If the pubkey is compressed.
         val timestamp: Long? = null, ///< The creation time of the key, if available, expressed in " + UNIX_EPOCH_TIME + "."
         val hdkeypath: String? = null, ///< The HD keypath, if the key is HD and available.
         val hdseedid: String? = null, ///< The Hash160 of the HD seed.
         val hdmasterfingerprint: String? = null, ///< The fingerprint of the master key.
-        val labels: List<String> = emptyList(), ///< Array of labels associated with the address. Currently limited to one label but returned
-        /// {RPCResult::Type::STR, "label name", "Label name (defaults to \"\")."},
+        val labels: List</** Label name (defaults to ""). */ String> = emptyList(), ///< Array of labels associated with the address. Currently limited to one label but returned
+
 )
 
 data class PeerInfo(
@@ -310,7 +315,8 @@ data class Transaction(
         val blockhash: String? = null,
         val confirmations: Int? = null,
         val time: Long? = null,
-        val blocktime: Long? = null)
+        val blocktime: Long? = null
+)
 
 data class DecodedScript(
         val asm: String? = null,
@@ -375,7 +381,8 @@ data class BlockInfoWithTransactions(
         val difficulty: BigDecimal? = null,
         val chainwork: String? = null,
         val previousblockhash: String? = null,
-        val nextblockhash: String? = null)
+        val nextblockhash: String? = null
+)
 
 
 data class SearchedTransactionResult(
@@ -441,7 +448,7 @@ data class WalletDescriptorInfo(
         val active: Boolean, ///< Whether this descriptor is currently used to generate new addresses
         val internal: Boolean? = null, ///< True if this descriptor is used to generate change addresses. False if this descriptor is used to generate receiving addresses; defined only for active descriptors
         // ranged
-        val range: Pair<Int, Int>? = null, ///< Defined only for ranged descriptors
+        val range: List<Int>? = null, ///< Defined only for ranged descriptors
                 //val : RPCResult::Type::NUM, ///< Range start inclusive
                 //val : RPCResult::Type::NUM, ///< Range end inclusive
         val next: Int? = null, ///< Same as next_index field. Kept for compatibility reason.
@@ -462,4 +469,141 @@ data class ImportDescriptorsResult(
 data class AddressByLabelResult(
         /** Purpose of address ("send" for sending address, "receive" for receiving address) */
         val purpose: String,
+)
+
+data class ReceivedByAddressResult(
+        /** Only returns true if imported addresses were involved in transaction */
+        val involvesWatchonly: Boolean,
+        /** The receiving address */
+        val address: String,
+        /** The total amount in CURRENCY_UNIT received by the address */
+        val amount: StrAmount,
+        /** The number of confirmations of the most recent transaction included */
+        val confirmations: Int,
+        /** The label of the receiving address. The default label is "" */
+        val label: String,
+        /** The ids of transactions received with the address */
+        val txids: List<String>
+)
+
+/** https://github.com/bitcoin/bitcoin/blob/master/src/wallet/rpc/transactions.cpp#L405 */
+data class AddressTransactionDescription(
+        /** The number of confirmations for the transaction. Negative confirmations means the
+         * transaction conflicted that many blocks ago. */
+        @field:JsonProperty
+        val confirmations: Int,
+        /** Only present if the transaction's only input is a coinbase one. */
+        val generated: Boolean? = null,
+        /**
+         * Whether we consider the transaction to be trusted and safe to spend from.
+         * Only present when the transaction has 0 confirmations (or negative confirmations, if conflicted).
+         */
+        val trusted: Boolean? = null,
+        /** The block hash containing the transaction. */
+        val blockhash: String? = null,
+        /** The block height containing the transaction. */
+        val blockheight: Long? = null,
+        /** The index of the transaction in the block that includes it. */
+        val blockindex: Int? = null,
+        /** The block time expressed in UNIX_EPOCH_TIME. */
+        val blocktime: NumTime,
+        /** The transaction id. */
+        val txid: StrHex,
+        /** The hash of serialized transaction, including witness data. */
+        val wtxid: StrHex,
+        /** Confirmed transactions that have been detected by the wallet to conflict with this transaction. */
+        val walletconflicts: List</** txid - The transaction id. */StrHex> = emptyList(),
+        /** Only if 'category' is 'send'. The txid if this tx was replaced. */
+        val replaced_by_txid: StrHex? = null,
+        /** Only if 'category' is 'send'. The txid if this tx replaces another. */
+        val replaces_txid: StrHex? = null,
+        /** Transactions in the mempool that directly conflict with either this transaction or an ancestor transaction */
+        val mempoolconflicts: List</** txid - The transaction id. */ StrHex> = emptyList(),
+        /** If a comment to is associated with the transaction. */
+        val to: String? = null,
+        /** The transaction time expressed in UNIX_EPOCH_TIME. */
+        val time: NumTime,
+        /** The time received expressed in UNIX_EPOCH_TIME. */
+        val timereceived: NumTime,
+        /** If a comment is associated with the transaction, only present if not empty. */
+        val comment: String? = null,
+        /** ("yes|no|unknown") Whether this transaction signals BIP125 replaceability or has an unconfirmed ancestor signaling BIP125 replaceability.
+         * May be unknown for unconfirmed transactions not in the mempool because their unconfirmed ancestors are unknown.
+         */
+        val `bip125-replaceable`: String,
+        /** Only if 'category' is 'received'. List of parent descriptors for the output script of this coin. */
+        val parent_descs: List</** The descriptor string. */String>? = null
+)
+
+data class AddressTransaction(
+        /** Only returns true if imported addresses were involved in transaction. */
+        val involvesWatchonly: Boolean? = null,
+        /**  The bitcoin address of the transaction (not returned if the output does not have an address, e.g. OP_RETURN null data). */
+        val address: String? = null,
+        /**
+         * The transaction category.
+         *         "send"                  Transactions sent.
+         *         "receive"               Non-coinbase transactions received.
+         *         "generate"              Coinbase transactions received with more than 100 confirmations.
+         *         "immature"              Coinbase transactions received with 100 or fewer confirmations.
+         *         "orphan"                Orphaned coinbase transactions received.
+         */
+        val category: String,
+        /** The amount in CURRENCY_UNIT. This is negative for the 'send' category, and is positive for all other categories */
+        val amount: StrAmount,
+        /** A comment for the address/transaction, if any */
+        val label: String? = null,
+        /** "the vout value" */
+        val vout: Float,
+        /** The amount of the fee in CURRENCY_UNIT. This is negative and only available for the
+         * 'send' category of transactions. */
+        val fee: StrAmount? = null,
+        /** 'true' if the transaction has been abandoned (inputs are respendable). */
+        val abandoned: Boolean,
+
+        /// TBD remove copy-paste by mixins via delegates
+        /** The number of confirmations for the transaction. Negative confirmations means the
+         * transaction conflicted that many blocks ago. */
+        val confirmations: Int,
+        /** Only present if the transaction's only input is a coinbase one. */
+        val generated: Boolean? = null,
+        /**
+         * Whether we consider the transaction to be trusted and safe to spend from.
+         * Only present when the transaction has 0 confirmations (or negative confirmations, if conflicted).
+         */
+        val trusted: Boolean? = null,
+        /** The block hash containing the transaction. */
+        val blockhash: String? = null,
+        /** The block height containing the transaction. */
+        val blockheight: Long? = null,
+        /** The index of the transaction in the block that includes it. */
+        val blockindex: Int? = null,
+        /** The block time expressed in UNIX_EPOCH_TIME. */
+        val blocktime: NumTime,
+        /** The transaction id. */
+        val txid: StrHex,
+        /** The hash of serialized transaction, including witness data. */
+        val wtxid: StrHex,
+        /** Confirmed transactions that have been detected by the wallet to conflict with this transaction. */
+        val walletconflicts: List</** txid - The transaction id. */StrHex> = emptyList(),
+        /** Only if 'category' is 'send'. The txid if this tx was replaced. */
+        val replaced_by_txid: StrHex? = null,
+        /** Only if 'category' is 'send'. The txid if this tx replaces another. */
+        val replaces_txid: StrHex? = null,
+        /** Transactions in the mempool that directly conflict with either this transaction or an ancestor transaction */
+        val mempoolconflicts: List</** txid - The transaction id. */ StrHex> = emptyList(),
+        /** If a comment to is associated with the transaction. */
+        val to: String? = null,
+        /** The transaction time expressed in UNIX_EPOCH_TIME. */
+        val time: NumTime,
+        /** The time received expressed in UNIX_EPOCH_TIME. */
+        val timereceived: NumTime,
+        /** If a comment is associated with the transaction, only present if not empty. */
+        val comment: String? = null,
+        /** ("yes|no|unknown") Whether this transaction signals BIP125 replaceability or has an unconfirmed ancestor signaling BIP125 replaceability.
+         * May be unknown for unconfirmed transactions not in the mempool because their unconfirmed ancestors are unknown.
+         */
+        val `bip125-replaceable`: String,
+        /** Only if 'category' is 'received'. List of parent descriptors for the output script of this coin. */
+        val parent_descs: List</** The descriptor string. */String>? = null
 )

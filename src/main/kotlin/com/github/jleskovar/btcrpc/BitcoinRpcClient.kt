@@ -20,8 +20,11 @@ interface BitcoinRpcClient {
     @JsonRpcMethod("addnode")
     fun addNode(address: String, operation: NodeListOperation)
 
+    /**
+     * Safely copies the current wallet file to the specified destination, which can either be a directory or a path with a filename.
+     */
     @JsonRpcMethod("backupwallet")
-    fun backupWallet(destination: String)
+    fun backupWallet(/** The destination directory or file */ destination: String)
 
     @JsonRpcMethod("clearbanned")
     fun clearBanned()
@@ -79,11 +82,18 @@ interface BitcoinRpcClient {
     @JsonRpcMethod("getaddressesbylabel")
     fun getAddressesByLabel(/** The label. */ label: String): Map<String, AddressByLabelResult>
 
+    /**
+     * Returns the total available balance.
+     * The available balance is what the wallet considers currently spendable, and is
+     * thus affected by options which limit spendability such as -spendzeroconfchange.
+     */
     @JsonRpcMethod("getbalance")
     fun getBalance(
-            account: String = "*",
-            minconf: Int = 1,
-            includeWatchOnly: Boolean = false): BigDecimal
+        dummy: String? = "*", ///< Remains for backward compatibility. Must be excluded or set to "*"
+        minconf: Int = 0, ///< Only include transactions confirmed at least this many times.
+        includeWatchOnly: Boolean? = /* true for watch-only wallets, otherwise false */ null, ///< Also include balance in watch-only addresses (see 'importaddress')
+        avoidReuse: Boolean = true, ///< (only available if avoid_reuse wallet flag is set) Do not include balance in dirty outputs; addresses are considered dirty if they have previously been used in a transaction.
+    ): BigDecimal
 
     @JsonRpcMethod("getbestblockhash")
     fun getBestBlockhash(): String
@@ -340,15 +350,19 @@ interface BitcoinRpcClient {
         purpose: String? = null
     ): List<String>
 
+
     @JsonRpcMethod("listlockunspent")
     fun listLockUnspent(): List<Map<*, *>>
 
+    /**
+     * List balances by receiving address.
+     */
     @JsonRpcMethod("listreceivedbyaddress")
     fun listReceivedByAddress(
             minConfirmations: Int? = null,
             includeEmpty: Boolean? = null,
             includeWatchOnly: Boolean? = null
-    ): List<Map<*, *>>
+    ): List<ReceivedByAddressResult>
 
     @JsonRpcMethod("listsinceblock")
     fun listSinceBlock(
@@ -358,13 +372,31 @@ interface BitcoinRpcClient {
             includeRemoved: Boolean? = null
     ): Map<*, *>
 
+    /**
+     * If a label name is provided, this will return only incoming transactions paying to addresses with the specified label."
+     * Returns up to 'count' most recent transactions skipping the first 'from' transactions.
+     */
     @JsonRpcMethod("listtransactions")
     fun listTransactions(
-            account: String? = null,
-            count: Int? = null,
-            skip: Int? = null,
-            includeWatchOnly: Boolean? = null
-    ): List<Map<*, *>>
+        /**
+         * If set, should be a valid label name to return only incoming transactions
+         * with the specified label, or "*" to disable filtering and return all transactions.
+         */
+        label: String? = null,
+        /**
+         * The number of transactions to return
+         */
+        count: Int = 10,
+        /**
+         * The number of transactions to skip
+         */
+        skip: Int = 0,
+        /**
+         * true for watch-only wallets, otherwise false,
+         * Include transactions to watch-only addresses (see 'importaddress')
+         */
+        includeWatchOnly: Boolean? = null
+    ): List<AddressTransaction>
 
     @JsonRpcMethod("listunspent")
     fun listUnspent(
@@ -407,16 +439,35 @@ interface BitcoinRpcClient {
     @JsonRpcMethod("sendrawtransaction")
     fun sendRawTransaction(transaction: String): String
 
+    /** Send an amount to a given address.
+     * @return if verbose is not set or set to false
+     *  - txid - The transaction id.
+     *  if verbose is set to true -
+     *      {
+     *          val txid: StrHex - The transaction id.,
+     *          val fee_reason: String - The transaction fee reason.
+     *      }
+     */
     @JsonRpcMethod("sendtoaddress")
     fun sendToAddress(
             address: String,
             amount: BigDecimal,
+            /**
+             * A comment used to store what the transaction is for.
+             * This is not part of the transaction, just kept in your wallet
+             */
             comment: String? = null,
+            /**
+             * A comment to store the name of the person or organization
+             * to which you're sending the transaction. This is not part of the
+             * transaction, just kept in your wallet.
+             */
             commentTo: String? = null,
             subtractFee: Boolean? = null,
             replaceable: Boolean? = null,
             minConfirmations: Int? = null,
-            feeEstimateMode: FeeEstimateMode? = null): String
+            feeEstimateMode: FeeEstimateMode? = null
+    ): String
 
     @JsonRpcMethod("setban")
     fun setBan(

@@ -100,9 +100,8 @@ class WrappedWebSocketBtcClient(
 
     override fun getAddressesByLabel(label: String) = delegate.getAddressesByLabel(label)
 
-    override fun getBalance(account: String, minconf: Int, includeWatchOnly: Boolean): BigDecimal {
-        return delegate.getBalance(account, minconf, includeWatchOnly)
-    }
+    override fun getBalance(dummy: String?, minconf: Int, includeWatchOnly: Boolean?, avoidReuse: Boolean) =
+        delegate.getBalance(dummy, minconf, includeWatchOnly, avoidReuse)
 
     override fun getBestBlockhash(): String {
         return delegate.getBestBlockhash()
@@ -281,17 +280,15 @@ class WrappedWebSocketBtcClient(
         return delegate.listLockUnspent()
     }
 
-    override fun listReceivedByAddress(minConfirmations: Int?, includeEmpty: Boolean?, includeWatchOnly: Boolean?): List<Map<*, *>> {
-        return delegate.listReceivedByAddress(minConfirmations, includeEmpty, includeWatchOnly)
-    }
+    override fun listReceivedByAddress(minConfirmations: Int?, includeEmpty: Boolean?, includeWatchOnly: Boolean?) =
+        delegate.listReceivedByAddress(minConfirmations, includeEmpty, includeWatchOnly)
 
     override fun listSinceBlock(blockHash: String?, targetConfirmations: Int?, includeWatchOnly: Boolean?, includeRemoved: Boolean?): Map<*, *> {
         return delegate.listSinceBlock(blockHash, targetConfirmations, includeWatchOnly, includeRemoved)
     }
 
-    override fun listTransactions(account: String?, count: Int?, skip: Int?, includeWatchOnly: Boolean?): List<Map<*, *>> {
-        return delegate.listTransactions(account, count, skip, includeWatchOnly)
-    }
+    override fun listTransactions(label: String?, count: Int, skip: Int, includeWatchOnly: Boolean?) =
+        delegate.listTransactions(label, count, skip, includeWatchOnly)
 
     override fun listUnspent(minConfirmations: Int?, maxConfirmations: Int?, addresses: List<String>?, includeUnsafe: Boolean?, queryOptions: QueryOptions?): List<QueryResult> {
         return delegate.listUnspent(minConfirmations, maxConfirmations, addresses, includeUnsafe, queryOptions)

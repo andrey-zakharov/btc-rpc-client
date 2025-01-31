@@ -35,6 +35,7 @@ object BitcoinRpcClientFactory {
 
         jsonRpcHttpClient = JsonRpcHttpClient(
                 objectMapper,
+            // TBD createWalletClient?
                 URL("${if (secure) "https" else "http"}://$user@$host:$port${
                     wallet?.let { "/wallet/$it" } ?: ""
                 }"),
@@ -116,8 +117,9 @@ object BitcoinRpcClientFactory {
     private val BASE64 = Base64.getEncoder()
 
     val objectMapper: ObjectMapper by lazy {
-        ObjectMapper().registerKotlinModule()
-    //.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+        ObjectMapper()
+            .registerKotlinModule()
+            //.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
     }
 }
 
