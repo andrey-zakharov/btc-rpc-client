@@ -380,7 +380,7 @@ interface BitcoinRpcClient {
     ): Map<*, *>
 
     /**
-     * If a label name is provided, this will return only incoming transactions paying to addresses with the specified label."
+     * If a label name is provided, this will return only incoming transactions paying to addresses with the specified label.
      * Returns up to 'count' most recent transactions skipping the first 'from' transactions.
      */
     @JsonRpcMethod("listtransactions")
