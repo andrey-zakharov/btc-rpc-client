@@ -30,7 +30,7 @@ dependencies {
 }
 
 group = "com.github.jleskovar"
-version = "1.2.5"
+version = "1.2.6"
 description = "btc-rpc-client"
 //java.sourceCompatibility = JavaVersion.VERSION_1_8
 kotlin {
