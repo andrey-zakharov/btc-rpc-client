@@ -359,9 +359,16 @@ interface BitcoinRpcClient {
      */
     @JsonRpcMethod("listreceivedbyaddress")
     fun listReceivedByAddress(
-            minConfirmations: Int? = null,
-            includeEmpty: Boolean? = null,
-            includeWatchOnly: Boolean? = null
+        /** The minimum number of confirmations before payments are included. */
+        minConfirmations: Int? = null,
+        /** Whether to include addresses that haven't received any payments. */
+        includeEmpty: Boolean? = null,
+        /** true for watch-only wallets, otherwise false. Whether to include watch-only addresses (see 'importaddress') */
+        includeWatchOnly: Boolean? = null,
+        /** If present and non-empty, only return information on this address. */
+        addressFilter: String? = null,
+        /** Include immature coinbase transactions. */
+        includeImmatureCoinbase: Boolean = false
     ): List<ReceivedByAddressResult>
 
     @JsonRpcMethod("listsinceblock")
