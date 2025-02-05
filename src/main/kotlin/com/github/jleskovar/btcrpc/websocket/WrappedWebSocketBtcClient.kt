@@ -280,8 +280,13 @@ class WrappedWebSocketBtcClient(
         return delegate.listLockUnspent()
     }
 
-    override fun listReceivedByAddress(minConfirmations: Int?, includeEmpty: Boolean?, includeWatchOnly: Boolean?) =
-        delegate.listReceivedByAddress(minConfirmations, includeEmpty, includeWatchOnly)
+    override fun listReceivedByAddress(
+        minConfirmations: Int?,
+        includeEmpty: Boolean?,
+        includeWatchOnly: Boolean?,
+        addressFilter: String?,
+        includeImmatureCoinbase: Boolean
+    ) = delegate.listReceivedByAddress(minConfirmations, includeEmpty, includeWatchOnly, addressFilter, includeImmatureCoinbase)
 
     override fun listSinceBlock(blockHash: String?, targetConfirmations: Int?, includeWatchOnly: Boolean?, includeRemoved: Boolean?): Map<*, *> {
         return delegate.listSinceBlock(blockHash, targetConfirmations, includeWatchOnly, includeRemoved)
