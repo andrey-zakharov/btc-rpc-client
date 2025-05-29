@@ -371,9 +371,9 @@ class WrappedWebSocketBtcClient(
         return delegate.uptime()
     }
 
-    override fun validateAddress(address: String) {
+    override fun validateAddress(address: String) =
         delegate.validateAddress(address)
-    }
+
 
     override fun verifyChain(): Boolean {
         return delegate.verifyChain()
